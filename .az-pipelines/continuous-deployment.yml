@@ -1,0 +1,34 @@
+# Pipeline is triggered on pushes to master
+# and does NOT run in Pull Requests
+trigger:
+  - master
+pr: none
+
+# Schedule a Ubuntu VM to run the job
+pool:
+  vmImage: ubuntu-latest
+
+# Construct the job to deploy the upgrade
+jobs:
+  - job: DeployHelmUpgrade
+    steps:
+      - task: AzureKeyVault@1
+        displayName: 'Pull Secrets from Key Vault'
+        inputs:
+          azureSubscription: # TBA: This is our Service Principal
+          KeyVaultName: 'bridge-data-keyvault'
+          SecretsFilter: 'proxySecretToken'
+
+      - task: Bash@3
+        displayName: 'Create .secret/ directory'
+        inputs:
+          targetType: 'inline'
+          script: 'mkdir -p .secret'
+
+      - task: Bash@3
+        displayName: 'Generate .secret/config.yaml'
+        inputs:
+          targetType: 'inline'
+          script: |
+            sed -e "s/<proxySecretToken>/$(proxySecretToken)/" \
+            config/config-template.yaml > .secret/config.yaml
