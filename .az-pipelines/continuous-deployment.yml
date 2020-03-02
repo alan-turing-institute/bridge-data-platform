@@ -15,7 +15,7 @@ jobs:
       - task: AzureKeyVault@1
         displayName: 'Pull Secrets from Key Vault'
         inputs:
-          azureSubscription: # TBA: This is our Service Principal
+          azureSubscription: 'bridge-data-platform-scn'
           KeyVaultName: 'bridge-data-keyvault'
           SecretsFilter: 'proxySecretToken'
 
