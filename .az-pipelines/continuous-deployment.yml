@@ -9,6 +9,8 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
+  kubernetes_cluster_name: 'bridge-data-cluster'
+  kubernetes_cluster_resource_group: 'bridge-data-platform'
   kubernetes_version: '1.14.8'
 
 # Construct the job to deploy the upgrade
@@ -19,6 +21,13 @@ jobs:
         displayName: 'Install kubectl $(KUBERNETES_VERSION)'
         inputs:
           kubectlVersion: $(KUBERNETES_VERSION)
+
+      - task: AzureCLI@1
+        displayName: 'Merge kubectl config'
+        inputs:
+          azureSubscription: 'bridge-data-platform-scn'
+          scriptLocation: 'inlineScript'
+          inlineScript: 'az aks get-credentials -n $(KUBERNETES_CLUSTER_NAME) -g $(KUBERNETES_CLUSTER_RESOURCE_GROUP)'
 
       - task: AzureKeyVault@1
         displayName: 'Pull Secrets from Key Vault'
