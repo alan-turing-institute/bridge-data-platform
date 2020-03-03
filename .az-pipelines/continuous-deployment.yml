@@ -8,10 +8,18 @@ pr: none
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  kubernetes_version: '1.14.8'
+
 # Construct the job to deploy the upgrade
 jobs:
   - job: DeployHelmUpgrade
     steps:
+      - task: KubectlInstaller@0
+        displayName: 'Install kubectl $(KUBERNETES_VERSION)'
+        inputs:
+          kubectlVersion: $(KUBERNETES_VERSION)
+
       - task: AzureKeyVault@1
         displayName: 'Pull Secrets from Key Vault'
         inputs:
