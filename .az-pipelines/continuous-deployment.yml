@@ -9,6 +9,7 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
+  helm_version: '2.15.0'
   kubernetes_cluster_name: 'bridge-data-cluster'
   kubernetes_cluster_resource_group: 'bridge-data-platform'
   kubernetes_version: '1.14.8'
@@ -28,6 +29,11 @@ jobs:
           azureSubscription: 'bridge-data-platform-scn'
           scriptLocation: 'inlineScript'
           inlineScript: 'az aks get-credentials -n $(KUBERNETES_CLUSTER_NAME) -g $(KUBERNETES_CLUSTER_RESOURCE_GROUP)'
+
+      - task: HelmInstaller@1
+        displayName: 'Install helm version $(HELM_VERSION)'
+        inputs:
+          helmVersionToInstall: $(HELM_VERSION)
 
       - task: AzureKeyVault@1
         displayName: 'Pull Secrets from Key Vault'
