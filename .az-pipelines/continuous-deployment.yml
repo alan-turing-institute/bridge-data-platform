@@ -10,8 +10,11 @@ pool:
 
 # List of environment variables to be used throughout the pipeline.
 # Mostly consists of software versions and namespaces.
+# Versions 'jupyterhub_chart_version' can be found at the following URL:
+#     https://jupyterhub.github.io/helm-chart/
 variables:
   helm_version: '2.15.0'
+  jupyterhub_chart_version: '0.8.2'
   kubernetes_cluster_name: 'bridge-data-cluster'
   kubernetes_cluster_resource_group: 'bridge-data-platform'
   kubernetes_namespace: 'bridgehub'
@@ -74,3 +77,28 @@ jobs:
           script: |
             sed -e "s/<proxySecretToken>/$(proxySecretToken)/" \
             config/config-template.yaml > .secret/config.yaml
+
+      - task: Bash@3
+        displayName: 'Add JupyterHub helm chart repository'
+        inputs:
+          targetType: 'inline'
+          script: |
+            helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/
+            helm repo update
+
+      - task: HelmDeploy@0
+        displayName: |
+          'Install JupyterHub helm chart version $(JUPYTERHUB_CHART_VERSION) '
+          'to release/namespace $(KUBERNETES_NAMESPACE)'
+        inputs:
+          connectionType: 'Azure Resource Manager'
+          azureSubscription: $(SERVICE_CONNECTION)
+          azureResourceGroup: $(KUBERNETES_CLUSTER_RESOURCE_GROUP)
+          kubernetesCluster: $(KUBERNETES_CLUSTER_NAME)
+          namespace: $(KUBERNETES_NAMESPACE)
+          command: 'upgrade'
+          chartType: 'Name'
+          chartName: 'jupyterhub/jupyterhub'
+          releaseName: $(KUBERNETES_NAMESPACE)
+          valueFile: '.secret/config.yaml'
+          arguments: '--version $(JUPYTERHUB_CHART_VERSION) --timeout 600'
