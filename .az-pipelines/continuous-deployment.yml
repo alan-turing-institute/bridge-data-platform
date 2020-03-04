@@ -74,3 +74,11 @@ jobs:
           script: |
             sed -e "s/<proxySecretToken>/$(proxySecretToken)/" \
             config/config-template.yaml > .secret/config.yaml
+
+      - task: Bash@3
+        displayName: 'Add JupyterHub helm chart repository'
+        inputs:
+          targetType: 'inline'
+          script: |
+            helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/
+            helm repo update
