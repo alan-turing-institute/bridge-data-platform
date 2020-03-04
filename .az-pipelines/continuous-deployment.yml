@@ -8,10 +8,52 @@ pr: none
 pool:
   vmImage: ubuntu-latest
 
+# List of environment variables to be used throughout the pipeline.
+# Mostly consists of software versions and namespaces.
+variables:
+  helm_version: '2.15.0'
+  kubernetes_cluster_name: 'bridge-data-cluster'
+  kubernetes_cluster_resource_group: 'bridge-data-platform'
+  kubernetes_namespace: 'bridgehub'
+  kubernetes_version: '1.14.8'
+  service_connection: 'bridge-data-platform-scn'
+
 # Construct the job to deploy the upgrade
 jobs:
   - job: DeployHelmUpgrade
     steps:
+      - task: KubectlInstaller@0
+        displayName: 'Install kubectl version $(KUBERNETES_VERSION)'
+        inputs:
+          kubectlVersion: $(KUBERNETES_VERSION)
+
+      - task: AzureCLI@1
+        displayName: 'Merge kubectl config'
+        inputs:
+          azureSubscription: $(SERVICE_CONNECTION)
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            az aks get-credentials \
+              --name $(KUBERNETES_CLUSTER_NAME) \
+              --resource-group $(KUBERNETES_CLUSTER_RESOURCE_GROUP)
+
+      - task: HelmInstaller@1
+        displayName: 'Install helm version $(HELM_VERSION)'
+        inputs:
+          helmVersionToInstall: $(HELM_VERSION)
+
+      - task: HelmDeploy@0
+        displayName: 'Initialise helm'
+        inputs:
+          connectionType: 'Azure Resource Manager'
+          azureSubscription: $(SERVICE_CONNECTION)
+          azureResourceGroup: $(KUBERNETES_CLUSTER_RESOURCE_GROUP)
+          kubernetesCluster: $(KUBERNETES_CLUSTER_NAME)
+          namespace: $(KUBERNETES_NAMESPACE)
+          command: 'init'
+          arguments: '--client-only'
+          tillerNamespace: 'kube-system'
+
       - task: AzureKeyVault@1
         displayName: 'Pull Secrets from Key Vault'
         inputs:
