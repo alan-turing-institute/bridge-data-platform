@@ -1,2 +1,31 @@
+# Cull inactive pods to free up resources
+cull:
+  enabled: true
+  timeout: 3600
+  every: 300
+
+# Pull images as soon as a node is added to reduce wait time
+prePuller:
+  continuous:
+    enabled: true
+
 proxy:
   secretToken: "<proxySecretToken>"
+
+scheduling:
+  # Allow cluster to scale up in anticipation of users arrival
+  # (reduces wait time)
+  podPriority:
+    enabled: true
+  # Pack users onto nodes so that empty ones can be scaled down
+  userScheduler:
+    enabled: true
+
+# Set resource limits to efficiently pack users onto nodes
+singleuser:
+  cpu:
+    limit: 0.5
+    guarantee: 0.5
+  memory:
+    limit: 1G
+    guarantee: 1G
