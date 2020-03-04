@@ -10,8 +10,13 @@ pool:
 
 # List of environment variables to be used throughout the pipeline.
 # Mostly consists of software versions and namespaces.
+#
 # Versions 'jupyterhub_chart_version' can be found at the following URL:
 #     https://jupyterhub.github.io/helm-chart/
+#
+# JupyterHub HELM CHART version 0.8.2 corresponds to JUPYTERHUB version 0.9.6
+# See which version of JUPYTERHUB the HELM CHART installs here:
+#     https://github.com/jupyterhub/zero-to-jupyterhub-k8s/tags
 variables:
   helm_version: '2.15.0'
   jupyterhub_chart_version: '0.8.2'
