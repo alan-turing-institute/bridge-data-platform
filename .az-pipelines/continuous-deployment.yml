@@ -87,8 +87,8 @@ jobs:
             helm repo update
 
       - task: HelmDeploy@0
-        displayName: |
-          'Install JupyterHub helm chart version $(JUPYTERHUB_CHART_VERSION) to release/namespace $(KUBERNETES_NAMESPACE)'  # yamllint disable-line rule:line-length
+        # yamllint disable-line rule:line-length
+        displayName: 'Install JupyterHub helm chart version $(JUPYTERHUB_CHART_VERSION) to release/namespace $(KUBERNETES_NAMESPACE)'
         inputs:
           connectionType: 'Azure Resource Manager'
           azureSubscription: $(SERVICE_CONNECTION)
