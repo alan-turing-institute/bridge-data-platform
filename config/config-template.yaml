@@ -1,2 +1,25 @@
+cull:
+  enabled: true
+  timeout: 3600
+  every: 300
+
+prePuller:
+  continuous:
+    enabled: true
+
 proxy:
   secretToken: "<proxySecretToken>"
+
+scheduling:
+  podPriority:
+    enabled: true
+  userScheduler:
+    enabled: true
+
+singleuser:
+  cpu:
+    limit: 0.5
+    guarantee: 0.5
+  memory:
+    limit: 1G
+    guarantee: 1G
