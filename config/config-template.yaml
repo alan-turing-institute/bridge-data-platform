@@ -29,12 +29,3 @@ singleuser:
   memory:
     limit: 1G
     guarantee: 1G
-  # Mount external NFS server to user pods as a shareddata folder
-  storage:
-    extraVolumes:
-      - name: bridge-shared-data
-        persistentVolumeClaim:
-          claimName: bridge-shared-data-claim
-    extraVolumeMounts:
-      - name: bridge-shared-data
-        mountPath: /home/shareddata
