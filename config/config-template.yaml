@@ -29,3 +29,11 @@ singleuser:
   memory:
     limit: 1G
     guarantee: 1G
+  storage:
+    extraVolumes:
+      - name: bridge-shared-data
+        persistentVolumeClaim:
+          claimName: bridge-shared-data-claim
+    extraVolumeMounts:
+      - name: bridge-shared-data
+        mountPath: /home/shareddata
