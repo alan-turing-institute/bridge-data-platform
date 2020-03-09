@@ -8,6 +8,8 @@ auth:
   admin:
     access: true
     users: ["edaub", "sgibson91"]
+  whitelist:
+    users: []
 
 # Cull inactive pods to free up resources
 cull:
