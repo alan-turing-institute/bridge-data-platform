@@ -89,7 +89,7 @@ jobs:
         displayName: 'Template IP address into JupyterHub config'
         inputs:
           script: |
-            JUPYTERHUB_IP=$(kubectl -n $(KUBERNETES_NAMESPACE) get svc proxy-public | awk ''{ print $4}'' | tail -n 1))
+            JUPYTERHUB_IP=$(kubectl -n $(KUBERNETES_NAMESPACE) get svc proxy-public | awk ''{ print $4}'' | tail -n 1)
             sed -i -e "s/<jupyterhubIp>/$(JUPYTERHUB_IP)/" .secret/config.yaml
 
       - task: Bash@3
