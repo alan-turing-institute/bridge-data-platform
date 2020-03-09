@@ -85,6 +85,16 @@ jobs:
             -e "s/<githubClientSecret>/$(githubClientSecret)/" \
             config/config-template.yaml > .secret/config.yaml
 
+      - task: CmdLine@2
+        displayName: 'Template IP address into JupyterHub config'
+        inputs:
+          script: |
+            JUPYTERHUB_IP=$( \
+              kubectl -n $(KUBERNETES_NAMESPACE) get svc proxy-public | \
+              awk '{ print $4}' | tail -n 1 \
+            )
+            sed -i -e "s/<jupyterhubIp>/${JUPYTERHUB_IP}/" .secret/config.yaml
+
       - task: Bash@3
         displayName: 'Add JupyterHub helm chart repository'
         inputs:
