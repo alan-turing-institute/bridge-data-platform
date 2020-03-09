@@ -1,3 +1,16 @@
+# Authenticate users with GitHub
+auth:
+  type: github
+  github:
+    clientId: "<githubClientId>"
+    clientSecret: "<githubClientSecret>"
+    callbackUrl: "http://<jupyterhubIp>/hub/oauth_callback"
+  admin:
+    access: true
+    users: ["edaub", "sgibson91"]
+  whitelist:
+    users: []
+
 # Cull inactive pods to free up resources
 cull:
   enabled: true
