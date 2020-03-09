@@ -67,7 +67,7 @@ jobs:
         inputs:
           azureSubscription: 'bridge-data-platform-scn'
           KeyVaultName: 'bridge-data-keyvault'
-          SecretsFilter: 'proxySecretToken'
+          SecretsFilter: 'proxySecretToken, githubClientId, githubClientSecret'
 
       - task: Bash@3
         displayName: 'Create .secret/ directory'
@@ -81,6 +81,8 @@ jobs:
           targetType: 'inline'
           script: |
             sed -e "s/<proxySecretToken>/$(proxySecretToken)/" \
+            -e "s/<githubClientId>/$(githubClientId)/" \
+            -e "s/<githubClientSecret>/$(githubClientSecret)/" \
             config/config-template.yaml > .secret/config.yaml
 
       - task: Bash@3
