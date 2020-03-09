@@ -5,6 +5,9 @@ auth:
     clientId: "<githubClientId>"
     clientSecret: "<githubClientSecret>"
     callbackUrl: "http://<jupyterhubIp>/hub/oauth_callback"
+  admin:
+    access: true
+    users: ["edaub", "sgibson91"]
 
 # Cull inactive pods to free up resources
 cull:
