@@ -39,4 +39,4 @@ singleuser:
           readOnly: false
     extraVolumeMounts:
       - name: bridge-shared-data
-        mountPath: /home/data
+        mountPath: /home/joyvan/data
