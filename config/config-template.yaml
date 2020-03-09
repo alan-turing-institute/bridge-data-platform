@@ -37,4 +37,4 @@ singleuser:
           claimName: bridge-shared-data-pvc
     extraVolumeMounts:
       - name: bridge-shared-data
-        mountPath: /home/joyvan/data
+        mountPath: /home/jovyan/data
