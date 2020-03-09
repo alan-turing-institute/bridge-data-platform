@@ -4,6 +4,12 @@ cull:
   timeout: 3600
   every: 300
 
+hub:
+  # Use JupyterLab interface by default
+  extraConfig:
+    jupyterlab: |
+      c.Spawner.cmd = ['jupyter-labhub']
+
 # Pull images as soon as a node is added to reduce wait time
 prePuller:
   continuous:
@@ -29,6 +35,8 @@ singleuser:
   memory:
     limit: 1G
     guarantee: 1G
+  # Use JupyterLab interface by default
+  defaultUrl: "/lab"
   # Mount external NFS server to user pods as a shareddata folder
   storage:
     extraVolumes:
