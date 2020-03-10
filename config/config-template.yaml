@@ -72,6 +72,7 @@ singleuser:
       kubespawner_override:
         image: jupyter/datascience-notebook:e255f1aa00b2
     - display_name: "Custom repo2docker image"
+      # yamllint disable-line rule:line-length
       description: "Custom image built from the JupyterHub environment repo using repo2docker: https://github.com/alan-turing-institute/bridge-data-environment"
       kubespawner_override:
         image: turinginst/bridge-data-env:2020.03.10-00ef4f7
