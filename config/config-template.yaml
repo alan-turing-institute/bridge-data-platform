@@ -59,3 +59,20 @@ singleuser:
     extraVolumeMounts:
       - name: bridge-shared-data
         mountPath: /home/jovyan/data
+  # Define the default image
+  image:
+    name: jupyter/minimal-notebook
+    tag: e255f1aa00b2
+  profileList:
+    - display_name: "Minimal environment"
+      description: "A simple Python environment"
+      default: true
+    - display_name: "Data Science Environment"
+      description: "Includes Python, R, and Julia"
+      kubespawner_override:
+        image: jupyter/datascience-notebook:e255f1aa00b2
+    - display_name: "Custom repo2docker image"
+      # yamllint disable-line rule:line-length
+      description: "Custom image built from the JupyterHub environment repo using repo2docker: https://github.com/alan-turing-institute/bridge-data-environment"
+      kubespawner_override:
+        image: turinginst/bridge-data-env:2020.03.10-00ef4f7
