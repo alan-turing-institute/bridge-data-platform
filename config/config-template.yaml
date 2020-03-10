@@ -40,8 +40,12 @@ scheduling:
   userScheduler:
     enabled: true
 
-# Set resource limits to efficiently pack users onto nodes
 singleuser:
+  # Require core pods to stay on labelled node
+  corePods:
+    nodeAffinity:
+      matchNodePurpose: require
+  # Set CPU and memory limits to efficiently pack users onto nodes
   cpu:
     limit: 0.5
     guarantee: 0.5
@@ -63,6 +67,7 @@ singleuser:
   image:
     name: jupyter/minimal-notebook
     tag: e255f1aa00b2
+  # Create profile lists for users to choose from
   profileList:
     - display_name: "Minimal environment"
       description: "A simple Python environment"
