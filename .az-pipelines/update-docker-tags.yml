@@ -29,7 +29,8 @@ jobs:
       - script: 'python -m pip install -U pip setuptools wheel'
         displayName: 'Upgrade Python tools'
 
-      - script: 'git clone https://github.com/HelmUpgradeBot/UpdateDockerTags.git'
+      - script: |
+          git clone https://github.com/HelmUpgradeBot/UpdateDockerTags.git
         displayName: 'Clone UpdateDockerTags repo'
 
       - script: 'python -m pip install -r requirements.txt'
@@ -47,6 +48,7 @@ jobs:
           KeyVaultName: $(KEYVAULT_NAME)
           SecretsFilter: $(TOKEN_NAME)
 
-      - script: 'API_TOKEN=$(TOKEN_NAME) docker-tags $(REPO_OWNER) $(REPO_NAME) --dry-run'
+      - script: |
+          API_TOKEN=$(TOKEN_NAME) docker-tags $(REPO_OWNER) $(REPO_NAME)
         displayName: 'Update Docker image tags'
         workingDirectory: $(WORKING_DIR)
