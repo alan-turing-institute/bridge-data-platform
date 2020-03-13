@@ -26,3 +26,6 @@ jobs:
 
   - script: 'python -m pip install -r UpdateDockerTags/requirements.txt'
     displayName: 'Install UpdateDockerTags dependencies'
+
+  - script: 'python UpdateDockerTags/setup.py install'
+    displayName: 'Install UpdateDockerTags CLI'
