@@ -11,6 +11,8 @@ pool:
 
 variables:
   keyvault_name: 'bridge-data-keyvault'
+  repo_name: 'bridge-data-platform'
+  repo_owner: 'alan-turing-institute'
   service_connection: ' bridge-data-platform-scn'
   token_name: 'githubAccessToken'
 
@@ -42,5 +44,5 @@ jobs:
       KeyVaultName: $(KEYVAULT_NAME)
       SecretsFilter: $(TOKEN_NAME)
   
-  - script: 'API_TOKEN=$(TOKEN_NAME) python -m docker-tags $(REPO_OWNER) $(REPO_NAME) --dry-run'
+  - script: 'API_TOKEN=$(TOKEN_NAME) docker-tags $(REPO_OWNER) $(REPO_NAME) --dry-run'
     displayName: 'Update Docker image tags'
