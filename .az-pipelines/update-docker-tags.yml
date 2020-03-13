@@ -23,3 +23,6 @@ jobs:
   
   - script: 'git clone https://github.com/HelmUpgradeBot/UpdateDockerTags.git'
     displayName: 'Clone UpdateDockerTags repo'
+
+  - script: 'python -m pip install -r UpdateDockerTags/requirements.txt'
+    displayName: 'Install UpdateDockerTags dependencies'
