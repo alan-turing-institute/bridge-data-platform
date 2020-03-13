@@ -9,6 +9,11 @@ schedules:
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+  keyvault_name: 'bridge-data-keyvault'
+  service_connection: ' bridge-data-platform-scn'
+  token_name: 'githubAccessToken'
+
 jobs:
 - job: UpdateDockerImageTags
   steps:
@@ -29,3 +34,9 @@ jobs:
 
   - script: 'python UpdateDockerTags/setup.py install'
     displayName: 'Install UpdateDockerTags CLI'
+
+  - task: AzureKeyVault@1
+    inputs:
+      azureSubscription: $(SERVICE_CONNECTION)
+      KeyVaultName: $(KEYVAULT_NAME)
+      SecretsFilter: $(TOKEN_NAME)
