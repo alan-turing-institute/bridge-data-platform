@@ -103,17 +103,6 @@ jobs:
             helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/
             helm repo update
 
-      - task: Kubernetes@1
-        displayName: 'Apply Kubernetes templates'
-        inputs:
-          connectionType: 'Azure Resource Manager'
-          azureSubscriptionEndpoint: $(SERVICE_CONNECTION)
-          azureResourceGroup: $(KUBERNETES_CLUSTER_RESOURCE_GROUP)
-          kubernetesCluster: $(KUBERNETES_CLUSTER_NAME)
-          namespace: $(KUBERNETES_NAMESPACE)
-          command: 'apply'
-          arguments: '-f config/templates/'
-
       - task: HelmDeploy@0
         # yamllint disable-line rule:line-length
         displayName: 'Install JupyterHub helm chart version $(JUPYTERHUB_CHART_VERSION) to release/namespace $(KUBERNETES_NAMESPACE)'
