@@ -1,0 +1,19 @@
+schedules:
+- cron: "0 0 * * *"
+  displayName: Daily Docker image tag update
+  branches:
+    include:
+    - master
+  always: true
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+jobs:
+- job: UpdateDockerImageTags
+  steps:
+  - task: UsePythonVersion@0
+    displayName: 'Install Python 3.7'
+    inputs:
+      versionSpec: '3.7'
+      addToPath: true
