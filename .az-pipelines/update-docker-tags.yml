@@ -36,7 +36,7 @@ jobs:
     displayName: 'Install UpdateDockerTags dependencies'
     workingDirectory: $(WORKING_DIR)
 
-  - script: 'python UpdateDockerTags/setup.py install'
+  - script: 'python setup.py install'
     displayName: 'Install UpdateDockerTags CLI'
     workingDirectory: $(WORKING_DIR)
 
