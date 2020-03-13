@@ -25,10 +25,10 @@ jobs:
     inputs:
       versionSpec: '3.7'
       addToPath: true
-  
+
   - script: 'python -m pip install -U pip setuptools wheel'
     displayName: 'Upgrade Python tools'
-  
+
   - script: 'git clone https://github.com/HelmUpgradeBot/UpdateDockerTags.git'
     displayName: 'Clone UpdateDockerTags repo'
 
@@ -46,7 +46,7 @@ jobs:
       azureSubscription: $(SERVICE_CONNECTION)
       KeyVaultName: $(KEYVAULT_NAME)
       SecretsFilter: $(TOKEN_NAME)
-  
+
   - script: 'API_TOKEN=$(TOKEN_NAME) docker-tags $(REPO_OWNER) $(REPO_NAME) --dry-run'
     displayName: 'Update Docker image tags'
     workingDirectory: $(WORKING_DIR)
