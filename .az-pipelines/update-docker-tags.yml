@@ -41,6 +41,7 @@ jobs:
           SecretsFilter: $(TOKEN_NAME)
 
       - script: |
+          # yamllint disable-line rule:line-length
           API_TOKEN=$(githubAccessToken) python UpdateDockerTags.py $(REPO_OWNER) $(REPO_NAME)
         displayName: 'Update Docker image tags'
         workingDirectory: $(WORKING_DIR)
