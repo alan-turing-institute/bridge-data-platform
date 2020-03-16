@@ -72,15 +72,6 @@ singleuser:
     guarantee: 1G
   # Use JupyterLab interface by default
   defaultUrl: "/lab"
-  # Mount external NFS server to user pods as a shareddata folder
-  storage:
-    extraVolumes:
-      - name: bridge-shared-data
-        persistentVolumeClaim:
-          claimName: bridge-shared-data-pvc
-    extraVolumeMounts:
-      - name: bridge-shared-data
-        mountPath: /home/jovyan/data
   # Define the default image
   image:
     name: jupyter/minimal-notebook
