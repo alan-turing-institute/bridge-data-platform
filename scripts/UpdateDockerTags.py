@@ -6,6 +6,7 @@ import time
 import shutil
 import logging
 import requests
+import argparse
 import subprocess
 
 import numpy as np
@@ -352,3 +353,36 @@ class UpdateDockerTags:
             time.sleep(5)
 
             logging.info("Fork successfully deleted")
+
+
+def parse_args():
+    """Construct the command line arguments"""
+    DESCRIPTION = (
+        "Script to automatically update Docker image tags in a JupyterHub config file"
+    )
+    parser = argparse.ArgumentParser(description=DESCRIPTION)
+
+    parser.add_argument("repo_owner", help="The owner of the GitHub repository")
+    parser.add_argument("repo_name", help="The name of the JupyterHub deployment repo")
+
+    parser.add_argument(
+        "--branch",
+        type=str,
+        default="bump-image-tags",
+        help="The git branch to commit to",
+    )
+
+    parser.add_argument("--dry-run", action="store_true", help="Perform a dry-run")
+
+    return parser.parse_args()
+
+
+def main():
+    """Main function"""
+    args = parse_args(sys.argv[1:])
+    obj = UpdateDockerTags()
+    obj.check_image_tags()
+
+
+if __name__ == "__main__":
+    main()
