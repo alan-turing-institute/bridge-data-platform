@@ -35,13 +35,14 @@ class UpdateDockerTags:
             f"https://api.github.com/repos/{self.repo_owner}/{self.repo_name}/"
         )
         configure_logging()
-        self.set_git_config()
         self.remove_fork()
 
         self.token = os.getenv("API_TOKEN", None)
         if self.token is None:
             raise EnvironmentError("API_TOKEN must be set")
         self.headers = {"Authorization": f"token {self.token}"}
+
+        self.set_git_config()
 
     def check_image_tags(self):
         """Function to check the image tags against the currently deployed tags
@@ -359,18 +360,13 @@ class UpdateDockerTags:
         """Setting git config"""
         logging.info("Setting up git configuration")
 
+        subprocess.check_call(["git", "config", "--global", "user.name", "sgibson91"])
         subprocess.check_call(
-            ["git", "config", "--global", "user.name", "sgibson91"]
+            ["git", "config", "--global", "user.email", "sgibson@turing.ac.uk"]
         )
-        subprocess.check_call(
-            [
-                "git",
-                "config",
-                "--global",
-                "user.email",
-                "sgibson@turing.ac.uk",
-            ]
-        )
+
+        requests.get("https://api.github.com/user", auth=("sgibson91", self.token))
+
 
 def parse_args(args):
     """Construct the command line arguments"""
