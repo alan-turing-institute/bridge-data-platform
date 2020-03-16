@@ -355,7 +355,7 @@ class UpdateDockerTags:
             logging.info("Fork successfully deleted")
 
 
-def parse_args():
+def parse_args(args):
     """Construct the command line arguments"""
     DESCRIPTION = (
         "Script to automatically update Docker image tags in a JupyterHub config file"
@@ -380,7 +380,7 @@ def parse_args():
 def main():
     """Main function"""
     args = parse_args(sys.argv[1:])
-    obj = UpdateDockerTags()
+    obj = UpdateDockerTags(vars(args))
     obj.check_image_tags()
 
 
