@@ -313,6 +313,7 @@ class UpdateDockerTags:
             url {str} -- GitHub raw content URL to read config from
         """
         res = yaml.safe_load(requests.get(url, headers=self.headers).text)
+        print(json.dumps(res, indent=2, sort_keys=True))
 
         self.old_image_tags["minimal-notebook"] = res["singleuser"]["image"]["tag"]
 
