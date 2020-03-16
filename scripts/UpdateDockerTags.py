@@ -41,6 +41,7 @@ class UpdateDockerTags:
         if self.token is None:
             raise EnvironmentError("API_TOKEN must be set")
         self.headers = {"Authorization": f"token {self.token}"}
+        print(self.headers)
 
     def check_image_tags(self):
         """Function to check the image tags against the currently deployed tags
