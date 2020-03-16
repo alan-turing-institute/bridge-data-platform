@@ -35,6 +35,7 @@ class UpdateDockerTags:
             f"https://api.github.com/repos/{self.repo_owner}/{self.repo_name}/"
         )
         configure_logging()
+        self.set_git_config()
         self.remove_fork()
 
         self.token = os.getenv("API_TOKEN", None)
@@ -354,6 +355,22 @@ class UpdateDockerTags:
 
             logging.info("Fork successfully deleted")
 
+    def set_git_config(self):
+        """Setting git config"""
+        logging.info("Setting up git configuration")
+
+        subprocess.check_call(
+            ["git", "config", "--global", "user.name", "sgibson91"]
+        )
+        subprocess.check_call(
+            [
+                "git",
+                "config",
+                "--global",
+                "user.email",
+                "sgibson@turing.ac.uk",
+            ]
+        )
 
 def parse_args(args):
     """Construct the command line arguments"""
