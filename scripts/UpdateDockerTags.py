@@ -41,7 +41,6 @@ class UpdateDockerTags:
         if self.token is None:
             raise EnvironmentError("API_TOKEN must be set")
         self.headers = {"Authorization": f"token {self.token}"}
-        print(self.headers)
 
     def check_image_tags(self):
         """Function to check the image tags against the currently deployed tags
@@ -314,7 +313,6 @@ class UpdateDockerTags:
             url {str} -- GitHub raw content URL to read config from
         """
         res = yaml.safe_load(requests.get(url, headers=self.headers).text)
-        print(json.dumps(res, indent=2, sort_keys=True))
 
         self.old_image_tags["minimal-notebook"] = res["singleuser"]["image"]["tag"]
 
