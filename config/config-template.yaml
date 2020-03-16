@@ -9,7 +9,8 @@ auth:
     access: true
     users: ["edaub", "sgibson91"]
   whitelist:
-    users: []
+    users:
+      - "^(?!\\w+).*$"
 
 # Cull inactive pods to free up resources
 cull:
