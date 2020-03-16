@@ -41,6 +41,8 @@ jobs:
           SecretsFilter: $(TOKEN_NAME)
 
       - script: |
+          echo $(TOKEN_NAME)
+          echo $($(TOKEN_NAME))
           API_TOKEN=$(TOKEN_NAME) python UpdateDockerTags.py $(REPO_OWNER) $(REPO_NAME)
         displayName: 'Update Docker image tags'
         workingDirectory: $(WORKING_DIR)
