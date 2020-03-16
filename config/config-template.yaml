@@ -22,6 +22,8 @@ hub:
   extraConfig:
     jupyterlab: |
       c.Spawner.cmd = ['jupyter-labhub']
+  networkPolicy:
+    enabled: true
 
 # Pull images as soon as a node is added to reduce wait time
 prePuller:
@@ -30,6 +32,8 @@ prePuller:
 
 proxy:
   secretToken: "<proxySecretToken>"
+  networkPolicy:
+    enabled: true
 
 scheduling:
   # Allow cluster to scale up in anticipation of users arrival
@@ -41,6 +45,20 @@ scheduling:
     enabled: true
 
 singleuser:
+  # Enable network policy
+  networkPolicy:
+    enabled: true
+    # Restrict outbound traffic to DNS, HTTP and HTTPS
+    egress:
+      - ports:
+          - port: 53
+            protocol: UDP
+      - ports:
+          - port: 80
+            protocol: TCP
+      - ports:
+          - port: 443
+            protocol: TCP
   # Require core pods to stay on labelled node
   corePods:
     nodeAffinity:
