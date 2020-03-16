@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import yaml
+import time
 import shutil
 import logging
 import requests
@@ -12,21 +13,12 @@ import numpy as np
 from itertools import compress
 
 
-def configure_logging(identity=False):
-    if identity:
-        logging.basicConfig(
-            level=logging.DEBUG,
-            filename="UpdateDockerTags.log",
-            filemode="a",
-            format="[%(asctime)s %(levelname)s] %(message)s",
-            datefmt="%Y-%m-%d %H:%M:%S",
-        )
-    else:
-        logging.basicConfig(
-            level=logging.DEBUG,
-            format="[%(asctime)s %(levelname)s] %(message)s",
-            datefmt="%Y-%m-%d %H:%M:%S",
-        )
+def configure_logging():
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format="[%(asctime)s %(levelname)s] %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
 
 
 class UpdateDockerTags:
@@ -41,20 +33,13 @@ class UpdateDockerTags:
         self.repo_api = (
             f"https://api.github.com/repos/{self.repo_owner}/{self.repo_name}/"
         )
-        configure_logging(identity=self.identity)
+        configure_logging()
         self.remove_fork()
 
-        if self.token_name is None:
-            self.token = os.getenv("API_TOKEN", None)
-            if self.token is None:
-                raise EnvironmentError(
-                    "Either --token-name or API_TOKEN must be set"
-                )
-
-            self.headers = {"Authorization": f"token {self.token}"}
-
-        else:
-            self.get_token()
+        self.token = os.getenv("API_TOKEN", None)
+        if self.token is None:
+            raise EnvironmentError("API_TOKEN must be set")
+        self.headers = {"Authorization": f"token {self.token}"}
 
     def check_image_tags(self):
         """Function to check the image tags against the currently deployed tags
@@ -88,8 +73,7 @@ class UpdateDockerTags:
 
         if np.any(cond):
             logging.info(
-                "The following images can be updated: %s"
-                % list(compress(images, cond))
+                "The following images can be updated: %s" % list(compress(images, cond))
             )
             if not self.dry_run:
                 self.update_images(list(compress(images, cond)))
@@ -118,7 +102,7 @@ class UpdateDockerTags:
         """Perform git add, commit, push actions to an edited file
 
         Arguments:
-            images_to_update {list of strings} -- list of image tags to be updated
+            images_to_update {list of strings} -- list of image tags to update
         """
         logging.info("Adding file: %s" % self.fname)
         add_cmd = ["git", "add", self.fname]
@@ -160,9 +144,7 @@ class UpdateDockerTags:
         """Check if sgibson91 has a fork of the repo or not"""
         res = requests.get("https://api.github.com/users/sgibson91/repos")
 
-        self.fork_exists = bool(
-            [x for x in res.json() if x["name"] == self.repo_name]
-        )
+        self.fork_exists = bool([x for x in res.json() if x["name"] == self.repo_name])
 
     def checkout_branch(self):
         """Checkout a branch of a git repo"""
@@ -170,8 +152,7 @@ class UpdateDockerTags:
             self.delete_old_branch()
 
             logging.info(
-                "Pulling master branch of: %s/%s"
-                % (self.repo_owner, self.repo_name)
+                "Pulling master branch of: %s/%s" % (self.repo_owner, self.repo_name)
             )
             pull_cmd = [
                 "git",
@@ -232,14 +213,12 @@ class UpdateDockerTags:
         logging.info("Creating Pull Request")
         pr = {
             "title": "Bumping Docker image tags",
-            "body": "This PR is bumping the Docker image tags for the computing environments to the most recently published",
+            "body": "This PR is bumping the Docker image tags for the compute environments to the most recently published",
             "base": "master",
             "head": f"sgibson91:{self.branch}",
         }
 
-        res = requests.post(
-            self.repo_api + "pulls", headers=self.headers, json=pr
-        )
+        res = requests.post(self.repo_api + "pulls", headers=self.headers, json=pr)
 
         if res:
             logging.info("Successfully opened Pull Request")
@@ -317,9 +296,7 @@ class UpdateDockerTags:
         """
         res = json.loads(requests.get(url).text)
 
-        updates_sorted = sorted(
-            res["results"], key=lambda k: k["last_updated"]
-        )
+        updates_sorted = sorted(res["results"], key=lambda k: k["last_updated"])
 
         if updates_sorted[-1]["name"] == "latest":
             new_tag = updates_sorted[-2]["name"]
@@ -336,9 +313,7 @@ class UpdateDockerTags:
         """
         res = yaml.safe_load(requests.get(url, headers=self.headers).text)
 
-        self.old_image_tags["minimal-notebook"] = res["singleuser"]["image"][
-            "tag"
-        ]
+        self.old_image_tags["minimal-notebook"] = res["singleuser"]["image"]["tag"]
 
         for image_name in ["datascience-notebook", "custom-env"]:
             for profile in res["singleuser"]["profileList"]:
@@ -353,54 +328,6 @@ class UpdateDockerTags:
                     old_image = profile["kubespawner_override"]["image"]
                     old_tag = old_image.split(":")[-1]
                     self.old_image_tags[image_name] = old_tag
-
-    def get_token(self):
-        """Get GitHub Personal Access Token from Azure Keyvault"""
-        self.login()
-
-        logging.info("Retrieving token: %s" % self.token_name)
-        vault_cmd = [
-            "az",
-            "keyvault",
-            "secret",
-            "show",
-            "--vault-name",
-            self.keyvault,
-            "--name",
-            self.token_name,
-            "--query",
-            "value",
-            "--output",
-            "tsv",
-        ]
-
-        try:
-            self.token = (
-                subprocess.check_output(vault_cmd).decode("utf-8").strip("\n")
-            )
-            self.headers = {"Authorization": f"token {self.token}"}
-            logging.info("Successfully retrieved token")
-        except Exception:
-            self.clean_up()
-            self.remove_fork()
-
-    def login(self):
-        """Login to Azure"""
-        login_cmd = ["az", "login"]
-
-        if self.identity:
-            login_cmd.append("--identity")
-            logging.info("Logging into Azure with Managed System Identity")
-        else:
-            login_cmd.extend(["--output", "none"])
-            logging.info("Logging into Azure interactively")
-
-        try:
-            subprocess.check_call(login_cmd)
-            logging.info("Successfully logged into Azure")
-        except Exception:
-            self.clean_up()
-            self.remove_fork()
 
     def make_fork(self):
         """Fork a GitHub repo"""
