@@ -1,5 +1,6 @@
 import os
 import json
+import yaml
 import requests
 
 HERE = os.path.dirname(__file__)
@@ -42,8 +43,7 @@ def get_dockerhub_tags(tag_dict):
         tag_dict {dict} -- A dictionary of image names and tags
     """
     for image in IMAGE_LIST:
-        tag_dict[image] = {}
-        tag_dict[image]["old_tag"] = find_most_recent_tag_dockerhub(
+        tag_dict[image]["new_tag"] = find_most_recent_tag_dockerhub(
             image, API_URLS[image]
         )
 
@@ -64,9 +64,40 @@ def get_config_filepath():
     return "/".join(tmp)
 
 
+def get_config_tags(tag_dict):
+    """Find old image tags from JupyterHub config file
+
+    Arguments:
+        tag_dict {dict -- A dictionary containing images and tags
+    """
+    filename = get_config_filepath()
+    with open(filename, "r") as stream:
+        config = yaml.safe_load(stream)
+
+    tag_dict["minimal-notebook"]["old_tag"] = config["singleuser"]["image"]["tag"]
+
+    for image in ["datascience-notebook", "repo2docker"]:
+        for profile in config["singleuser"]["profileList"]:
+            datascience_cond = (image == "datascience-notebook") and (
+                profile["display_name"] == "Data Science Environment"
+            )
+            r2d_cond = (image == "repo2docker") and (
+                profile["display_name"] == "Custom repo2docker image"
+            )
+
+            if datascience_cond or r2d_cond:
+                old_image = profile["kubespawner_override"]["image"]
+                old_tag = old_image.split(":")[-1]
+                tag_dict[image]["old_tag"] = old_tag
+
+
 def main():
     """Main function"""
-    tag_dict = {}  # Create empty list for image tags
+    tag_dict = {}  # Create empty dict for image tags
+    for image in IMAGE_LIST:
+        tag_dict[image] = {}
+
+    get_config_tags(tag_dict)
     get_dockerhub_tags(tag_dict)
 
 
