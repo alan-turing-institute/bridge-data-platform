@@ -14,6 +14,12 @@ API_URLS = {
 }
 
 
+def compare_tags(tag_dict):
+    for image in IMAGE_LIST:
+        if tag_dict[image]["old_tag"] == tag_dict[image]["new_tag"]:
+            del tag_dict[image]
+
+
 def find_most_recent_tag_dockerhub(name, url):
     """Find most recent tag of an image from Docker Hub
 
@@ -58,6 +64,8 @@ def get_config_tags(tag_dict):
     Arguments:
         tag_dict {dict -- A dictionary containing images and tags
     """
+    print("Pulling currently deployed image tags...")
+
     filename = get_config_filepath()
     with open(filename, "r") as stream:
         config = yaml.safe_load(stream)
@@ -85,6 +93,8 @@ def get_dockerhub_tags(tag_dict):
     Arguments:
         tag_dict {dict} -- A dictionary of image names and tags
     """
+    print("Pulling most recent tags from Docker Hub...")
+
     for image in IMAGE_LIST:
         tag_dict[image]["new_tag"] = find_most_recent_tag_dockerhub(
             image, API_URLS[image]
@@ -93,12 +103,18 @@ def get_dockerhub_tags(tag_dict):
 
 def main():
     """Main function"""
-    tag_dict = {}  # Create empty dict for image tags
+    # Construct dict for image tags
+    tag_dict = {}
     for image in IMAGE_LIST:
         tag_dict[image] = {}
 
     get_config_tags(tag_dict)
     get_dockerhub_tags(tag_dict)
+    compare_tags(tag_dict)
+
+    print("Tags to be updated: [name: old_tag...new_tag]")
+    for image in tag_dict.keys():
+        print(f"{image}: {tag_dict[image]['old_tag']}...{tag_dict[image]['new_tag']}")
 
 
 if __name__ == "__main__":
