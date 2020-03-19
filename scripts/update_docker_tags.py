@@ -36,18 +36,6 @@ def find_most_recent_tag_dockerhub(name, url):
     return new_tag
 
 
-def get_dockerhub_tags(tag_dict):
-    """Get image tags from Docker Hub for a dictionary of images
-
-    Arguments:
-        tag_dict {dict} -- A dictionary of image names and tags
-    """
-    for image in IMAGE_LIST:
-        tag_dict[image]["new_tag"] = find_most_recent_tag_dockerhub(
-            image, API_URLS[image]
-        )
-
-
 def get_config_filepath():
     """Construct the filepath of the JupyterHub config file
 
@@ -89,6 +77,18 @@ def get_config_tags(tag_dict):
                 old_image = profile["kubespawner_override"]["image"]
                 old_tag = old_image.split(":")[-1]
                 tag_dict[image]["old_tag"] = old_tag
+
+
+def get_dockerhub_tags(tag_dict):
+    """Get image tags from Docker Hub for a dictionary of images
+
+    Arguments:
+        tag_dict {dict} -- A dictionary of image names and tags
+    """
+    for image in IMAGE_LIST:
+        tag_dict[image]["new_tag"] = find_most_recent_tag_dockerhub(
+            image, API_URLS[image]
+        )
 
 
 def main():
