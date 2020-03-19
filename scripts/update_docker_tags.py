@@ -4,6 +4,13 @@ import requests
 
 HERE = os.path.dirname(__file__)
 ABSOLUTE_HERE = os.path.dirname(os.path.realpath(__file__))
+IMAGE_LIST = ["minimal-notebook", "datascience-notebook", "repo2docker"]
+
+API_URLS = {
+    "minimal-notebook": "https://hub.docker.com/v2/repositories/jupyter/minimal-notebook/tags",
+    "datascience-notebook": "https://hub.docker.com/v2/repositories/jupyter/datascience-notebook/tags",
+    "repo2docker": "https://hub.docker.com/v2/repositories/turinginst/bridge-data-env/tags",
+}
 
 
 def find_most_recent_tag_dockerhub(name, url):
@@ -34,16 +41,10 @@ def get_dockerhub_tags(tag_dict):
     Arguments:
         tag_dict {dict} -- A dictionary of image names and tags
     """
-    api_urls = {
-        "minimal-notebook": "https://hub.docker.com/v2/repositories/jupyter/minimal-notebook/tags",
-        "datascience-notebook": "https://hub.docker.com/v2/repositories/jupyter/datascience-notebook/tags",
-        "repo2docker": "https://hub.docker.com/v2/repositories/turinginst/bridge-data-env/tags",
-    }
-
-    for image in api_urls.keys():
+    for image in IMAGE_LIST:
         tag_dict[image] = {}
         tag_dict[image]["old_tag"] = find_most_recent_tag_dockerhub(
-            image, api_urls[image]
+            image, API_URLS[image]
         )
 
 
@@ -65,14 +66,7 @@ def get_config_filepath():
 
 def main():
     """Main function"""
-    # api_urls = {
-    #     "jupyterhub": "https://raw.githubusercontent.com/alan-turing-institute/bridge-data-platform/master/config/config-template.yaml",
-    #     "minimal-notebook": "https://hub.docker.com/v2/repositories/jupyter/minimal-notebook/tags",
-    #     "datascience-notebook": "https://hub.docker.com/v2/repositories/jupyter/datascience-notebook/tags",
-    #     "repo2docker": "https://hub.docker.com/v2/repositories/turinginst/bridge-data-env/tags",
-    # }
-
-    tag_dict = {}
+    tag_dict = {}  # Create empty list for image tags
     get_dockerhub_tags(tag_dict)
 
 
