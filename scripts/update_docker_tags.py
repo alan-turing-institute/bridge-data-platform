@@ -42,7 +42,25 @@ def get_dockerhub_tags(tag_dict):
 
     for image in api_urls.keys():
         tag_dict[image] = {}
-        tag_dict[image]["old_tag"] = find_most_recent_tag_dockerhub(image, api_urls[image])
+        tag_dict[image]["old_tag"] = find_most_recent_tag_dockerhub(
+            image, api_urls[image]
+        )
+
+
+def get_config_filepath():
+    """Construct the filepath of the JupyterHub config file
+
+    Returns:
+        {str} -- Absolute filepath to the JupyterHub config file
+    """
+    tmp = ABSOLUTE_HERE.split("/")
+
+    if HERE in tmp:
+        tmp.remove(HERE)
+
+    tmp.extend(["config", "config-template.yaml"])
+
+    return "/".join(tmp)
 
 
 def main():
