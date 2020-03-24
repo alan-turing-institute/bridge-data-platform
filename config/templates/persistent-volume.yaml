@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: bridge-shared-data-pv
+  namespace: bridgehub
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadOnlyMany
+  storageClassName: azurefile
+  azureFile:
+    secretName: shared-data-token
+    shareName: bridge-shared-data
+    readOnly: true
+  mountOptions:
+    - dir_mode=0777
+    - file_mode=0777
+    - uid=1000
+    - gid=1000
+    - mfsymlinks
+    - nobrl
