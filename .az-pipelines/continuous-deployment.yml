@@ -93,7 +93,9 @@ jobs:
               kubectl -n $(KUBERNETES_NAMESPACE) get svc proxy-public | \
               awk '{ print $4}' | tail -n 1 \
             )
+            echo $(JUPYTERHUB_IP)
             sed -i -e "s/<jupyterhubIp>/${JUPYTERHUB_IP}/" .secret/config.yaml
+            cat .secret/config.yaml
 
       - task: Bash@3
         displayName: 'Add JupyterHub helm chart repository'
