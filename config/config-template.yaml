@@ -19,10 +19,6 @@ cull:
   every: 300
 
 hub:
-  # Use JupyterLab interface by default
-  extraConfig:
-    jupyterlab: |
-      c.Spawner.cmd = ['jupyter-labhub']
   networkPolicy:
     enabled: true
 
@@ -71,8 +67,6 @@ singleuser:
   memory:
     limit: 1G
     guarantee: 1G
-  # Use JupyterLab interface by default
-  defaultUrl: "/lab"
   # Define the default image
   image:
     name: jupyter/minimal-notebook
