@@ -92,10 +92,10 @@ singleuser:
       kubespawner_override:
         image: turinginst/bridge-data-env:2020.03.10-c2c199f
   storage:
-      extraVolumes:
-        - name: bridge-shared-data
-          persistentVolumeClaim:
-            claimName: bridge-shared-data-pvc
-      extraVolumeMounts:
-        - name: bridge-shared-data
-          mountPath: /home/shared
+    extraVolumes:
+      - name: bridge-shared-data
+        persistentVolumeClaim:
+          claimName: bridge-shared-data-pvc
+    extraVolumeMounts:
+      - name: bridge-shared-data
+        mountPath: /home/shared
