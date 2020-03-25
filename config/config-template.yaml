@@ -85,3 +85,5 @@ singleuser:
       description: "Custom image built from the JupyterHub environment repo using repo2docker: https://github.com/alan-turing-institute/bridge-data-environment"
       kubespawner_override:
         image: turinginst/bridge-data-env:2020.03.10-c2c199f
+  # Use JupyterLab interface by default
+  defaultUrl: "/lab"
