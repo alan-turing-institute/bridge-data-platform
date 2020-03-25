@@ -112,9 +112,14 @@ def main():
     get_dockerhub_tags(tag_dict)
     compare_tags(tag_dict)
 
-    print("Tags to be updated: [name: old_tag...new_tag]")
-    for image in tag_dict.keys():
-        print(f"{image}: {tag_dict[image]['old_tag']}...{tag_dict[image]['new_tag']}")
+    if bool(tag_dict):
+        print("Tags to be updated: [name: old_tag...new_tag]")
+        for image in tag_dict.keys():
+            print(
+                f"{image}: {tag_dict[image]['old_tag']}...{tag_dict[image]['new_tag']}"
+            )
+    else:
+        print("Image tags are up to date!")
 
 
 if __name__ == "__main__":
