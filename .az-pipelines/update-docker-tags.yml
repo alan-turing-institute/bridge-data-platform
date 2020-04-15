@@ -33,11 +33,11 @@ jobs:
 
       - script: 'python -m pip install -r requirements.txt'
         displayName: 'Install UpdateDockerTags dependencies'
-        working_directory: 'UpdateDockerTags'
+        workingDirectory: 'UpdateDockerTags'
 
       - script: 'python setup.py install'
         displayName: 'Install UpdateDockerTags CLI'
-        working_directory: 'UpdateDockerTags'
+        workingDirectory: 'UpdateDockerTags'
 
       - task: AzureKeyVault@1
         displayName: 'Pull secret token from Key Vault'
