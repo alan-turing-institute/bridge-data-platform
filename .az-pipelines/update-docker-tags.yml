@@ -28,13 +28,7 @@ jobs:
       - script: 'python -m pip install -U pip setuptools wheel'
         displayName: 'Upgrade Python tools'
 
-      - script: 'git clone https://github.com/HelmUpgradeBot/UpdateDockerTags.git'
-        displayName: 'Clone UpdateDockerTags repo'
-
-      - script: 'python -m pip install -r UpdateDockerTags/requirements.txt'
-        displayName: 'Install UpdateDockerTags dependencies'
-
-      - script: 'python UpdateDockerTags/setup.py install'
+      - script: 'python -m pip install UpdateDockerTags'
         displayName: 'Install UpdateDockerTags CLI'
 
       - task: AzureKeyVault@1
