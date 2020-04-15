@@ -15,7 +15,6 @@ variables:
   repo_owner: 'alan-turing-institute'
   service_connection: ' bridge-data-platform-scn'
   token_name: 'githubAccessToken'
-  working_dir: 'scripts'
 
 jobs:
   - job: UpdateDockerImageTags
@@ -29,9 +28,14 @@ jobs:
       - script: 'python -m pip install -U pip setuptools wheel'
         displayName: 'Upgrade Python tools'
 
-      - script: 'python -m pip install -r requirements.txt'
+      - script: 'git clone https://github.com/HelmUpgradeBot/UpdateDockerTags.git'
+        displayName: 'Clone UpdateDockerTags repo'
+
+      - script: 'python -m pip install -r UpdateDockerTags/requirements.txt'
         displayName: 'Install UpdateDockerTags dependencies'
-        workingDirectory: $(WORKING_DIR)
+
+      - script: 'python UpdateDockerTags/setup.py install'
+        displayName: 'Install UpdateDockerTags CLI'
 
       - task: AzureKeyVault@1
         displayName: 'Pull secret token from Key Vault'
@@ -42,8 +46,7 @@ jobs:
 
       - script: |
           API_TOKEN=$(githubAccessToken) \
-          python UpdateDockerTags.py \
+          docker-tags \
           $(REPO_OWNER) \
-          $(REPO_NAME)
+          $(REPO_NAME) \
         displayName: 'Update Docker image tags'
-        workingDirectory: $(WORKING_DIR)
