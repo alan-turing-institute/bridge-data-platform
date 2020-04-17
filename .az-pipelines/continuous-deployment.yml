@@ -118,4 +118,5 @@ jobs:
           releaseName: $(KUBERNETES_NAMESPACE)
           valueFile: '.secret/config.yaml'
           arguments: |
-            --version $(JUPYTERHUB_CHART_VERSION) --timeout 600 --cleanup-on-fail
+            --version $(JUPYTERHUB_CHART_VERSION) \
+            --timeout 600 --cleanup-on-fail
