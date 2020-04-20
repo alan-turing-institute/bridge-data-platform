@@ -1,0 +1,19 @@
+trigger:
+- master
+
+pr:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  helm_version: '2.15.0'
+
+jobs:
+- job: LintAndValidateHelmChart
+  steps:
+  - task: HelmInstaller@1
+    displayName: 'Install Helm version $(HELM_VERSION)'
+    inputs:
+      helmVersionToInstall: $(HELM_VERSION)
