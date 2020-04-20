@@ -35,3 +35,12 @@ jobs:
       command: 'init'
       arguments: '--client-only'
       tillerNamespace: 'kube-system'
+
+  - task: Bash@3
+    displayName: 'Install kubeval'
+    inputs:
+      targetType: 'inline'
+      script: |
+        wget https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz
+        tar xf kubeval-linux-amd64.tar.gz
+        sudo cp kubeval /usr/local/bin
