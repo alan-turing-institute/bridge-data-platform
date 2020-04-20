@@ -87,4 +87,25 @@ The [`scripts`](./scripts) directory contains some other scripts that may come i
 The Docker images describing the computational environments are referenced by their image tags in the JupyterHub configuration file.
 When an update is made to the cluster, these specific tags of the images are pulled to make sure they are quickly available for all users when they are requesting their servers.
 
-Running `update_docker_tags.py` will 
+Running `update_docker_tags.py` will check if there are newer image tags published on [Docker Hub](https://hub.docker.com/) and print the new tags to the terminal output.
+A Pull Request can then be opened updating the image tags.
+
+The script runs with Python >= 3.7.
+To execute it, do the following:
+
+```bash
+# Clone this repository
+git clone https://github.com/alan-turing-institute/bridge-data-platform.git
+
+# Change into the scripts directory
+cd bridge-data-platform/scripts
+
+# At this point, you may like to set up a virtual
+# environment using either virtualenv or conda
+
+# Install the dependencies
+pip install -r requirements.txt
+
+# Run the script
+python update_docker_tags.py
+```
