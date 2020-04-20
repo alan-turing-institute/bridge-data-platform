@@ -45,6 +45,39 @@ jobs:
         tar xf kubeval-linux-amd64.tar.gz
         sudo cp kubeval /usr/local/bin
 
+  - task: AzureKeyVault@1
+    displayName: 'Pull Secrets from Key Vault'
+    inputs:
+      azureSubscription: 'bridge-data-platform-scn'
+      KeyVaultName: 'bridge-data-keyvault'
+      SecretsFilter: 'proxySecretToken, githubClientId, githubClientSecret'
+
+  - task: Bash@3
+    displayName: 'Create .secret/ directory'
+    inputs:
+      targetType: 'inline'
+      script: 'mkdir -p .secret'
+
+  - task: Bash@3
+    displayName: 'Generate .secret/config.yaml'
+    inputs:
+      targetType: 'inline'
+      script: |
+        sed -e "s/<proxySecretToken>/$(proxySecretToken)/" \
+        -e "s/<githubClientId>/$(githubClientId)/" \
+        -e "s/<githubClientSecret>/$(githubClientSecret)/" \
+        config/config-template.yaml > .secret/config.yaml
+
+  - task: CmdLine@2
+    displayName: 'Template IP address into JupyterHub config'
+    inputs:
+      script: |
+        JUPYTERHUB_IP=$( \
+          kubectl -n $(KUBERNETES_NAMESPACE) get svc proxy-public | \
+          awk '{ print $4}' | tail -n 1 \
+        )
+        sed -i -e "s/<jupyterhubIp>/${JUPYTERHUB_IP}/" .secret/config.yaml
+
   - task: Bash@3
     displayName: 'Add JupyterHub helm chart repository'
     inputs:
