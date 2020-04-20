@@ -70,7 +70,7 @@ singleuser:
   # Define the default image
   image:
     name: jupyter/minimal-notebook
-    tag: dc9744740e12
+    tag: 584e9ab39d22
   # Create profile lists for users to choose from
   profileList:
     - display_name: "Minimal environment"
@@ -79,11 +79,11 @@ singleuser:
     - display_name: "Data Science Environment"
       description: "Includes Python, R, and Julia"
       kubespawner_override:
-        image: jupyter/datascience-notebook:dc9744740e12
+        image: jupyter/datascience-notebook:584e9ab39d22
     - display_name: "Custom repo2docker image"
       # yamllint disable-line rule:line-length
       description: "Custom image built from the JupyterHub environment repo using repo2docker: https://github.com/alan-turing-institute/bridge-data-environment"
       kubespawner_override:
-        image: turinginst/bridge-data-env:2020.03.10-c2c199f
+        image: turinginst/bridge-data-env:2020.04.14-eb5bb8f
   # Use JupyterLab interface by default
   defaultUrl: "/lab"
