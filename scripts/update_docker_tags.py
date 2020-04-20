@@ -3,7 +3,7 @@ import json
 import yaml
 import requests
 
-HERE = os.path.dirname(__file__)
+SCRIPTS_PATH = "scripts"
 ABSOLUTE_HERE = os.path.dirname(os.path.realpath(__file__))
 IMAGE_LIST = ["minimal-notebook", "datascience-notebook", "repo2docker"]
 
@@ -50,8 +50,8 @@ def get_config_filepath():
     """
     tmp = ABSOLUTE_HERE.split("/")
 
-    if HERE in tmp:
-        tmp.remove(HERE)
+    if SCRIPTS_PATH in tmp:
+        tmp.remove(SCRIPTS_PATH)
 
     tmp.extend(["config", "config-template.yaml"])
 
