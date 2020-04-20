@@ -44,3 +44,11 @@ jobs:
         wget https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz
         tar xf kubeval-linux-amd64.tar.gz
         sudo cp kubeval /usr/local/bin
+
+  - task: Bash@3
+    displayName: 'Add JupyterHub helm chart repository'
+    inputs:
+      targetType: 'inline'
+      script: |
+        helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/
+        helm repo update
