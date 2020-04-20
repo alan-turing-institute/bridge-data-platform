@@ -9,6 +9,12 @@ pool:
 
 variables:
   helm_version: '2.15.0'
+  jupyterhub_chart_version: '0.8.2'
+  kubernetes_cluster_name: 'bridge-data-cluster'
+  kubernetes_cluster_resource_group: 'bridge-data-platform'
+  kubernetes_namespace: 'bridgehub'
+  kubernetes_version: '1.18.0'
+  service_connection: 'bridge-data-platform-scn'
 
 jobs:
 - job: LintAndValidateHelmChart
@@ -17,3 +23,15 @@ jobs:
     displayName: 'Install Helm version $(HELM_VERSION)'
     inputs:
       helmVersionToInstall: $(HELM_VERSION)
+
+  - task: HelmDeploy@0
+    displayName: 'Initialise helm'
+    inputs:
+      connectionType: 'Azure Resource Manager'
+      azureSubscription: $(SERVICE_CONNECTION)
+      azureResourceGroup: $(KUBERNETES_CLUSTER_RESOURCE_GROUP)
+      kubernetesCluster: $(KUBERNETES_CLUSTER_NAME)
+      namespace: $(KUBERNETES_NAMESPACE)
+      command: 'init'
+      arguments: '--client-only'
+      tillerNamespace: 'kube-system'
