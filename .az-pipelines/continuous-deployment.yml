@@ -23,7 +23,7 @@ variables:
   kubernetes_cluster_name: 'bridge-data-cluster'
   kubernetes_cluster_resource_group: 'bridge-data-platform'
   kubernetes_namespace: 'bridgehub'
-  kubernetes_version: '1.15.5'
+  kubernetes_version: '1.18.0'
   service_connection: 'bridge-data-platform-scn'
 
 # Construct the job to deploy the upgrade
