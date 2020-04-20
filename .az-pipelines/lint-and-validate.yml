@@ -52,3 +52,10 @@ jobs:
       script: |
         helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/
         helm repo update
+
+  - task: Bash@3
+    displayName: 'Run Helm Lint'
+    inputs:
+      targetType: 'inline'
+      script: |
+        helm lint jupyterhub/jupyterhub --version $(JUPYTERHUB_CHART_VERSION) -f .secret/config.yaml
