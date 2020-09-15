@@ -67,7 +67,9 @@ jobs:
         inputs:
           azureSubscription: "bridge-data-platform-scn"
           KeyVaultName: "bridge-data-keyvault"
-          SecretsFilter: "proxySecretToken, githubClientId, githubClientSecret, letsEncryptContactEmail"
+          SecretsFilter:
+            "proxySecretToken, githubClientId, githubClientSecret, \
+            letsEncryptContactEmail"
 
       - task: Bash@3
         displayName: "Create .secret/ directory"
