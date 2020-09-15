@@ -31,6 +31,9 @@ proxy:
   secretToken: "<proxySecretToken>"
   networkPolicy:
     enabled: true
+  # Expose proxy as loadbalancer (default for 0.8.2 is ClusterIP)
+  service:
+    type: LoadBalancer
   # Secure connection via https (certificates automatically renew)
   https:
     hosts:
