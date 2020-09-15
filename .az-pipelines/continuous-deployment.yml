@@ -18,75 +18,76 @@ pool:
 # See which version of JUPYTERHUB the HELM CHART installs here:
 #     https://github.com/jupyterhub/zero-to-jupyterhub-k8s/tags
 variables:
-  helm_version: '2.15.0'
-  jupyterhub_chart_version: '0.8.2'
-  kubernetes_cluster_name: 'bridge-data-cluster'
-  kubernetes_cluster_resource_group: 'bridge-data-platform'
-  kubernetes_namespace: 'bridgehub'
-  kubernetes_version: '1.18.0'
-  service_connection: 'bridge-data-platform-scn'
+  helm_version: "2.15.0"
+  jupyterhub_chart_version: "0.8.2"
+  kubernetes_cluster_name: "bridge-data-cluster"
+  kubernetes_cluster_resource_group: "bridge-data-platform"
+  kubernetes_namespace: "bridgehub"
+  kubernetes_version: "1.18.0"
+  service_connection: "bridge-data-platform-scn"
 
 # Construct the job to deploy the upgrade
 jobs:
   - job: DeployHelmUpgrade
     steps:
       - task: KubectlInstaller@0
-        displayName: 'Install kubectl version $(KUBERNETES_VERSION)'
+        displayName: "Install kubectl version $(KUBERNETES_VERSION)"
         inputs:
           kubectlVersion: $(KUBERNETES_VERSION)
 
       - task: AzureCLI@1
-        displayName: 'Merge kubectl config'
+        displayName: "Merge kubectl config"
         inputs:
           azureSubscription: $(SERVICE_CONNECTION)
-          scriptLocation: 'inlineScript'
+          scriptLocation: "inlineScript"
           inlineScript: |
             az aks get-credentials \
               --name $(KUBERNETES_CLUSTER_NAME) \
               --resource-group $(KUBERNETES_CLUSTER_RESOURCE_GROUP)
 
       - task: HelmInstaller@1
-        displayName: 'Install helm version $(HELM_VERSION)'
+        displayName: "Install helm version $(HELM_VERSION)"
         inputs:
           helmVersionToInstall: $(HELM_VERSION)
 
       - task: HelmDeploy@0
-        displayName: 'Initialise helm'
+        displayName: "Initialise helm"
         inputs:
-          connectionType: 'Azure Resource Manager'
+          connectionType: "Azure Resource Manager"
           azureSubscription: $(SERVICE_CONNECTION)
           azureResourceGroup: $(KUBERNETES_CLUSTER_RESOURCE_GROUP)
           kubernetesCluster: $(KUBERNETES_CLUSTER_NAME)
           namespace: $(KUBERNETES_NAMESPACE)
-          command: 'init'
-          arguments: '--client-only'
-          tillerNamespace: 'kube-system'
+          command: "init"
+          arguments: "--client-only"
+          tillerNamespace: "kube-system"
 
       - task: AzureKeyVault@1
-        displayName: 'Pull Secrets from Key Vault'
+        displayName: "Pull Secrets from Key Vault"
         inputs:
-          azureSubscription: 'bridge-data-platform-scn'
-          KeyVaultName: 'bridge-data-keyvault'
-          SecretsFilter: 'proxySecretToken, githubClientId, githubClientSecret'
+          azureSubscription: "bridge-data-platform-scn"
+          KeyVaultName: "bridge-data-keyvault"
+          SecretsFilter: "proxySecretToken, githubClientId, githubClientSecret, letsEncryptContactEmail"
 
       - task: Bash@3
-        displayName: 'Create .secret/ directory'
+        displayName: "Create .secret/ directory"
         inputs:
-          targetType: 'inline'
-          script: 'mkdir -p .secret'
+          targetType: "inline"
+          script: "mkdir -p .secret"
 
       - task: Bash@3
-        displayName: 'Generate .secret/config.yaml'
+        displayName: "Generate .secret/config.yaml"
         inputs:
-          targetType: 'inline'
+          targetType: "inline"
           script: |
             sed -e "s/<proxySecretToken>/$(proxySecretToken)/" \
             -e "s/<githubClientId>/$(githubClientId)/" \
             -e "s/<githubClientSecret>/$(githubClientSecret)/" \
+            -e "s/<letsEncryptContactEmail>/$(letsEncryptContactEmail)/" \
             config/config-template.yaml > .secret/config.yaml
 
       - task: CmdLine@2
-        displayName: 'Template IP address into JupyterHub config'
+        displayName: "Template IP address into JupyterHub config"
         inputs:
           script: |
             JUPYTERHUB_IP=$( \
@@ -96,26 +97,26 @@ jobs:
             sed -i -e "s/<jupyterhubIp>/${JUPYTERHUB_IP}/" .secret/config.yaml
 
       - task: Bash@3
-        displayName: 'Add JupyterHub helm chart repository'
+        displayName: "Add JupyterHub helm chart repository"
         inputs:
-          targetType: 'inline'
+          targetType: "inline"
           script: |
             helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/
             helm repo update
 
       - task: HelmDeploy@0
         # yamllint disable-line rule:line-length
-        displayName: 'Install JupyterHub helm chart version $(JUPYTERHUB_CHART_VERSION) to release/namespace $(KUBERNETES_NAMESPACE)'
+        displayName: "Install JupyterHub helm chart version $(JUPYTERHUB_CHART_VERSION) to release/namespace $(KUBERNETES_NAMESPACE)"
         inputs:
-          connectionType: 'Azure Resource Manager'
+          connectionType: "Azure Resource Manager"
           azureSubscription: $(SERVICE_CONNECTION)
           azureResourceGroup: $(KUBERNETES_CLUSTER_RESOURCE_GROUP)
           kubernetesCluster: $(KUBERNETES_CLUSTER_NAME)
           namespace: $(KUBERNETES_NAMESPACE)
-          command: 'upgrade'
-          chartType: 'Name'
-          chartName: 'jupyterhub/jupyterhub'
+          command: "upgrade"
+          chartType: "Name"
+          chartName: "jupyterhub/jupyterhub"
           releaseName: $(KUBERNETES_NAMESPACE)
-          valueFile: '.secret/config.yaml'
+          valueFile: ".secret/config.yaml"
           # yamllint disable-line rule:line-length
-          arguments: '--version $(JUPYTERHUB_CHART_VERSION) --timeout 600 --cleanup-on-fail'
+          arguments: "--version $(JUPYTERHUB_CHART_VERSION) --timeout 600 --cleanup-on-fail"
