@@ -120,5 +120,6 @@ jobs:
           chartName: "jupyterhub/jupyterhub"
           releaseName: $(KUBERNETES_NAMESPACE)
           valueFile: ".secret/config.yaml"
+          install: true
           # yamllint disable-line rule:line-length
           arguments: "--version $(JUPYTERHUB_CHART_VERSION) --timeout 600 --cleanup-on-fail"
