@@ -27,11 +27,11 @@ proxy:
   networkPolicy:
     enabled: true
   # Secure connection via https (certificates automatically renew)
-  https:
-    hosts:
-      - hub.bridge-data-platform.turing.ac.uk
-    letsencrypt:
-      contactEmail: "<letsEncryptContactEmail>"
+  # https:
+  #   hosts:
+  #     - hub.bridge-data-platform.turing.ac.uk
+  #   letsencrypt:
+  #     contactEmail: "<letsEncryptContactEmail>"
 
 scheduling:
   # Allow cluster to scale up in anticipation of users arrival
