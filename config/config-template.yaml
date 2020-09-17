@@ -4,6 +4,7 @@ auth:
   github:
     clientId: "<githubClientId>"
     clientSecret: "<githubClientSecret>"
+    # yamllint disable-line rule:line-length
     callbackUrl: "http://hub.bridge-data-platform.turing.ac.uk/hub/oauth_callback"
   admin:
     access: true
