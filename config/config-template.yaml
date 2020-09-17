@@ -4,19 +4,13 @@ auth:
   github:
     clientId: "<githubClientId>"
     clientSecret: "<githubClientSecret>"
-    callbackUrl: "http://<jupyterhubIp>/hub/oauth_callback"
+    callbackUrl: "http://hub.bridge-data-platform.turing.ac.uk/hub/oauth_callback"
   admin:
     access: true
-    users: ["edaub", "sgibson91"]
+    users: ["edaub", "sgibson91", "annahadji"]
   whitelist:
     users:
       - "^(?!\\w+).*$"
-
-# Cull inactive pods to free up resources
-cull:
-  enabled: true
-  timeout: 3600
-  every: 300
 
 hub:
   networkPolicy:
@@ -31,9 +25,6 @@ proxy:
   secretToken: "<proxySecretToken>"
   networkPolicy:
     enabled: true
-  # Expose proxy as loadbalancer (default for 0.8.2 is ClusterIP)
-  service:
-    type: LoadBalancer
   # Secure connection via https (certificates automatically renew)
   https:
     hosts:
