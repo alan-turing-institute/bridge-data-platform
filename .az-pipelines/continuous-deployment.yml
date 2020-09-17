@@ -61,4 +61,4 @@ steps:
       valueFile: ".secret/config.yaml"
       install: true
       # yamllint disable-line rule:line-length
-      arguments: "--version $(JUPYTERHUB_CHART_VERSION) --cleanup-on-fail"
+      arguments: "--version $(JUPYTERHUB_CHART_VERSION) --create-namespace --cleanup-on-fail"
