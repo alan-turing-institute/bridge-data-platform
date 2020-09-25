@@ -1,17 +1,28 @@
 # Authenticate users with GitHub
+# auth:
+#   type: github
+#   github:
+#     clientId: "<githubClientId>"
+#     clientSecret: "<githubClientSecret>"
+#     # yamllint disable-line rule:line-length
+#     callbackUrl:
+#       "http://hub.bridge-data-platform.turing.ac.uk/hub/oauth_callback"
+#   admin:
+#     access: true
+#     users: ["edaub", "sgibson91", "annahadji"]
+#   whitelist:
+#     users:
+#       - "^(?!\\w+).*$"
+
+# Authenticate users with Azure AD
 auth:
-  type: github
-  github:
-    clientId: "<githubClientId>"
-    clientSecret: "<githubClientSecret>"
+  type: azuread
+  azuread:
+    clientId: "<azureADClientId>"
+    clientSecret: "<azureADClientSecret>"
+    tenantId: "<azureADTenantId>"
     # yamllint disable-line rule:line-length
-    callbackUrl: "http://hub.bridge-data-platform.turing.ac.uk/hub/oauth_callback"
-  admin:
-    access: true
-    users: ["edaub", "sgibson91", "annahadji"]
-  whitelist:
-    users:
-      - "^(?!\\w+).*$"
+    callbackUrl: "https://hub.bridge-data-platform.turing.ac.uk/hub/oauth_callback"
 
 hub:
   networkPolicy:

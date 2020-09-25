@@ -4,9 +4,9 @@ trigger:
   - master
 pr: none
 
-# Schedule a Ubuntu VM to run the job
+# Schedule a Ubuntu VM to run the job (18.04 includes kubectl and helm)
 pool:
-  vmImage: ubuntu-18.04 # includes kubectl and helm
+  vmImage: ubuntu-18.04
 
 # List of environment variables to be used throughout the pipeline.
 # Mostly consists of software versions and namespaces.
@@ -31,7 +31,8 @@ steps:
       azureSubscription: $(SERVICE_CONNECTION)
       KeyVaultName: $(KEY_VAULT_NAME)
       SecretsFilter: "proxySecretToken, githubClientId, githubClientSecret, \
-        letsEncryptContactEmail"
+        letsEncryptContactEmail, azureADClientId, azureADClientSecret, \
+        azureADTenantId"
 
   - bash: |
       mkdir -p .secret
@@ -39,6 +40,9 @@ steps:
       -e "s/<githubClientId>/$(githubClientId)/" \
       -e "s/<githubClientSecret>/$(githubClientSecret)/" \
       -e "s/<letsEncryptContactEmail>/$(letsEncryptContactEmail)/" \
+      -e "s/<azureADClientId>/$(azureADClientId)/" \
+      -e "s/<azureADClientSecret>/$(azureADClientSecret)/" \
+      -e "s/<azureADTenantId>/$(azureADTenantId)/" \
       config/config-template.yaml > .secret/config.yaml
     displayName: "Generate .secret/config.yaml"
 
