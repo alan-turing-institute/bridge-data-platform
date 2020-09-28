@@ -19,7 +19,7 @@ auth:
     callbackUrl: "https://hub.bridge-data-platform.turing.ac.uk/hub/oauth_callback"
   admin:
     access: true
-    users: ["<hubAdminUsersList>"]
+    users: <hubAdminUsersList>
   whitelist:
     # exclude all for now until we have other allowed users
     users:
