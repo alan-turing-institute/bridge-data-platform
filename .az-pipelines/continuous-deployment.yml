@@ -32,7 +32,7 @@ steps:
       KeyVaultName: $(KEY_VAULT_NAME)
       SecretsFilter: "proxySecretToken, githubClientId, githubClientSecret, \
         letsEncryptContactEmail, azureADClientId, azureADClientSecret, \
-        azureADTenantId"
+        azureADTenantId, hubAdminUsersList"
 
   - bash: |
       mkdir -p .secret
@@ -43,6 +43,7 @@ steps:
       -e "s/<azureADClientId>/$(azureADClientId)/" \
       -e "s/<azureADClientSecret>/$(azureADClientSecret)/" \
       -e "s/<azureADTenantId>/$(azureADTenantId)/" \
+      -e "s/<hubAdminUsersList>/$(hubAdminUsersList)/" \
       config/config-template.yaml > .secret/config.yaml
     displayName: "Generate .secret/config.yaml"
 
