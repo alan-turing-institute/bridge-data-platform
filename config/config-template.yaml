@@ -1,102 +1,72 @@
-# Authenticate users with GitHub
-# auth:
-#   type: github
-#   github:
-#     clientId: "<githubClientId>"
-#     clientSecret: "<githubClientSecret>"
-#     # yamllint disable-line rule:line-length
-#     callbackUrl:
-#       "http://hub.bridge-data-platform.turing.ac.uk/hub/oauth_callback"
-
-# Authenticate users with Azure AD
 auth:
-  type: azuread
-  azuread:
-    clientId: "<azureADClientId>"
-    clientSecret: "<azureADClientSecret>"
-    tenantId: "<azureADTenantId>"
-    # yamllint disable-line rule:line-length
-    callbackUrl: "https://hub.bridge-data-platform.turing.ac.uk/hub/oauth_callback"
   admin:
     access: true
     users: <hubAdminUsersList>
+  azuread:
+    callbackUrl: https://hub.bridge-data-platform.turing.ac.uk/hub/oauth_callback
+    clientId: <azureADClientId>
+    clientSecret: <azureADClientSecret>
+    tenantId: <azureADTenantId>
+  type: azuread
   whitelist:
-    # exclude all for now until we have other allowed users
     users:
-      - "^(?!\\w+).*$"
-
+    - ^(?!\w+).*$
 hub:
   networkPolicy:
     enabled: true
-
-# Pull images as soon as a node is added to reduce wait time
 prePuller:
   continuous:
     enabled: true
-
 proxy:
-  secretToken: "<proxySecretToken>"
-  networkPolicy:
-    enabled: true
-  # Secure connection via https (certificates automatically renew)
   https:
     hosts:
-      - hub.bridge-data-platform.turing.ac.uk
+    - hub.bridge-data-platform.turing.ac.uk
     letsencrypt:
-      contactEmail: "<letsEncryptContactEmail>"
-
-scheduling:
-  # Allow cluster to scale up in anticipation of users arrival
-  # (reduces wait time)
-  podPriority:
-    enabled: true
-  # Pack users onto nodes so that empty ones can be scaled down
-  userScheduler:
-    enabled: true
-
-singleuser:
-  # Enable network policy
+      contactEmail: <letsEncryptContactEmail>
   networkPolicy:
     enabled: true
-    # Restrict outbound traffic to DNS, HTTP and HTTPS
-    egress:
-      - ports:
-          - port: 53
-            protocol: UDP
-      - ports:
-          - port: 80
-            protocol: TCP
-      - ports:
-          - port: 443
-            protocol: TCP
-  # Require core pods to stay on labelled node
+  secretToken: <proxySecretToken>
+scheduling:
+  podPriority:
+    enabled: true
+  userScheduler:
+    enabled: true
+singleuser:
   corePods:
     nodeAffinity:
       matchNodePurpose: require
-  # Set CPU and memory limits to efficiently pack users onto nodes
   cpu:
-    limit: 0.5
     guarantee: 0.5
-  memory:
-    limit: 1G
-    guarantee: 1G
-  # Define the default image
+    limit: 0.5
+  defaultUrl: /lab
   image:
     name: jupyter/minimal-notebook
-    tag: 584e9ab39d22
-  # Create profile lists for users to choose from
+    tag: hub-1.4.2
+  memory:
+    guarantee: 1G
+    limit: 1G
+  networkPolicy:
+    egress:
+    - ports:
+      - port: 53
+        protocol: UDP
+    - ports:
+      - port: 80
+        protocol: TCP
+    - ports:
+      - port: 443
+        protocol: TCP
+    enabled: true
   profileList:
-    - display_name: "Minimal environment"
-      description: "A simple Python environment"
-      default: true
-    - display_name: "Data Science Environment"
-      description: "Includes Python, R, and Julia"
-      kubespawner_override:
-        image: jupyter/datascience-notebook:584e9ab39d22
-    - display_name: "Custom repo2docker image"
-      # yamllint disable-line rule:line-length
-      description: "Custom image built from the JupyterHub environment repo using repo2docker: https://github.com/alan-turing-institute/bridge-data-environment"
-      kubespawner_override:
-        image: turinginst/bridge-data-env:2020.04.14-eb5bb8f
-  # Use JupyterLab interface by default
-  defaultUrl: "/lab"
+  - default: true
+    description: A simple Python environment
+    display_name: Minimal environment
+  - description: Includes Python, R, and Julia
+    display_name: Data Science Environment
+    kubespawner_override:
+      image: jupyter/datascience-notebook:ubuntu-20.04
+  - description: 'Custom image built from the JupyterHub environment repo using repo2docker:
+      https://github.com/alan-turing-institute/bridge-data-environment'
+    display_name: Custom repo2docker image
+    kubespawner_override:
+      image: turinginst/bridge-data-env:2020.06.22-8170d9c
